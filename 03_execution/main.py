@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys
+import time
 
 # Clear screen command
 clear = lambda: print("\033[H\033[2J", end="")
@@ -44,21 +46,30 @@ def parkingCost(hours:float, rate:float) -> float:
 
 def main():
     # Variable declarations
-    running:bool = True
+    estimating:bool = True
+    waiting:bool = True
     options:dict = init()
-    price:float = options["price"]
+    price:float = options["rate"]
+    too_big = sys.float_info.max
+    total_time_seconds:float = 0
+    return_cost:bool = True
 
     # Looping until a valid input is given
-    while running:
+    while estimating:
         clear()
         initial_input = input("How many hours are you going to be parked?: ")
         try:
             hours:float = float(initial_input)
+            if hours > too_big or hours < 0:
+                raise RuntimeError("Unreasonable amount of hours")
             total:float = parkingCost(hours, price)
             print(f"Your estimated cost is ${total:.2f}")
-            running = False
+            estimating = False
         except ValueError:
             input(f"Please enter a number. (press enter to try again)")
+        except RuntimeError:
+            input(f"Please enter a reasonable number of hours. (press enter to try again)")
+
 
 if __name__ == "__main__":
     main()
