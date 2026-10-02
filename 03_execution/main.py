@@ -68,7 +68,7 @@ def main():
             input(f"Please enter a reasonable number of hours. (press enter to try again)")
     while waiting:
         try:
-            time.sleep(0.001)
+            time.sleep(1)
             total_time_seconds += 1
             if total_time_seconds / 3600 > max_hours:
                 raise RuntimeError("Unreasonable amount of time")
