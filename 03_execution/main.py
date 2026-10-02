@@ -60,8 +60,11 @@ def main():
             if hours > max_hours or hours <= 0:
                 raise RuntimeError("Unreasonable amount of hours")
             total:float = parkingCost(hours, price)
-            print(f"Your estimated cost is ${total:.2f}")
-            estimating = False
+            acceptable = input(f"Your estimated cost is ${total:.2f}. Is this acceptable? (y/n): ")
+            if acceptable.lower() == "y":
+                estimating = False
+            else:
+                input(f"Thank you for your time. (press enter to try again)")
         except ValueError:
             input(f"Please enter a number. (press enter to try again)")
         except RuntimeError:
