@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# Clear screen command
+clear = lambda: print("\033[H\033[2J", end="")
+
 # Get configuration from file
 def init() -> dict:
     """
@@ -12,6 +15,7 @@ def init() -> dict:
     Returns:
         dict: Configuration options
     """
+
     config = {}
     with open("config.ini") as conf:
         for line in conf:
@@ -39,15 +43,22 @@ def parkingCost(hours:float, rate:float) -> float:
     return cost
 
 def main():
-    options = init()
+    # Variable declarations
+    running:bool = True
+    options:dict = init()
     price:float = options["price"]
-    initial_input = input("How many hours are you going to be parked?: ")
-    try:
-        hours:float = float(initial_input)
-        total:float = parkingCost(hours, price)
-        print(f"Your estimated cost is ${total:.2f}")
-    except ValueError:
-        print("Please enter a number.")
+
+    # Looping until a valid input is given
+    while running:
+        clear()
+        initial_input = input("How many hours are you going to be parked?: ")
+        try:
+            hours:float = float(initial_input)
+            total:float = parkingCost(hours, price)
+            print(f"Your estimated cost is ${total:.2f}")
+            running = False
+        except ValueError:
+            input(f"Please enter a number. (press enter to try again)")
 
 if __name__ == "__main__":
     main()
