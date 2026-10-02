@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 import time
 
 # Clear screen command
@@ -10,9 +9,7 @@ def init() -> dict:
     """
     Loads configuration from config.ini into a dictionary
 
-    Arbitrary options can be added to the config.ini file but
-    \n can only be used if the code is extended to handle them.
-    \n They will be ignored otherwise.
+    Currently only designed to load floats.
 
     Returns:
         dict: Configuration options
@@ -50,7 +47,7 @@ def main():
     waiting:bool = True
     options:dict = init()
     price:float = options["rate"]
-    too_big = sys.float_info.max
+    max_hours = options["max_hours"]
     total_time_seconds:float = 0
     return_cost:bool = True
 
@@ -60,7 +57,7 @@ def main():
         initial_input = input("How many hours are you going to be parked?: ")
         try:
             hours:float = float(initial_input)
-            if hours > too_big or hours < 0:
+            if hours > max_hours or hours < 0:
                 raise RuntimeError("Unreasonable amount of hours")
             total:float = parkingCost(hours, price)
             print(f"Your estimated cost is ${total:.2f}")
@@ -69,7 +66,26 @@ def main():
             input(f"Please enter a number. (press enter to try again)")
         except RuntimeError:
             input(f"Please enter a reasonable number of hours. (press enter to try again)")
-
+    while waiting:
+        try:
+            time.sleep(0.001)
+            total_time_seconds += 1
+            if total_time_seconds / 3600 > max_hours:
+                raise RuntimeError("Unreasonable amount of time")
+        except KeyboardInterrupt:
+            total_time_hours:float = total_time_seconds / 3600
+            print(f"\rYou have been parked for {total_time_hours:.2f} hours.")
+            waiting = False
+        except RuntimeError:
+            print("You have been parked for an unreasonable amount of time. Alerting staff.")
+            waiting = False
+            return_cost = False
+    if return_cost:
+        total_time_hours:float = total_time_seconds / 3600
+        if total_time_hours > hours:
+            print(f"You have exceeded your estimated time by {total_time_hours - hours:.2f} hour(s).")
+        total:float = parkingCost(total_time_hours, price)
+        print(f"Your total cost is ${total:.2f}")
 
 if __name__ == "__main__":
     main()
