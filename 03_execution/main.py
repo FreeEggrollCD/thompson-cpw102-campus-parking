@@ -57,7 +57,7 @@ def main():
         initial_input = input("How many hours are you going to be parked?: ")
         try:
             hours:float = float(initial_input)
-            if hours > max_hours or hours < 0:
+            if hours > max_hours or hours <= 0:
                 raise RuntimeError("Unreasonable amount of hours")
             total:float = parkingCost(hours, price)
             print(f"Your estimated cost is ${total:.2f}")
